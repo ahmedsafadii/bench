@@ -11,12 +11,12 @@ def install_bench(args):
 	# pre-requisites for bench repo cloning
 	success = run_os_command({
 		'apt-get': [
-			'sudo apt-get update',
-			'sudo apt-get install -y git build-essential python-setuptools python-dev'
+			'apt-get update',
+			'apt-get install -y git build-essential python-setuptools python-dev'
 		],
 		'yum': [
-			'sudo yum groupinstall -y "Development tools"',
-			'sudo yum install -y git python-setuptools python-devel'
+			'yum groupinstall -y "Development tools"',
+			'yum install -y git python-setuptools python-devel'
 		],
 	})
 
@@ -37,12 +37,12 @@ def install_bench(args):
 		})
 
 	run_os_command({
-		'apt-get': 'sudo python get-pip.py',
-		'yum': 'sudo python get-pip.py',
+		'apt-get': 'python get-pip.py',
+		'yum': 'python get-pip.py',
 	})
 
 	success = run_os_command({
-		'pip': 'sudo pip install ansible'
+		'pip': 'pip install ansible'
 	})
 
 	if not success:
@@ -55,7 +55,7 @@ def install_bench(args):
 	clone_bench_repo()
 
 	if args.develop:
-		run_playbook('develop/install.yml', sudo=True)
+		run_playbook('develop/install.yml', sudo=False)
 
 def install_python27():
 	version = (sys.version_info[0], sys.version_info[1])
@@ -67,8 +67,8 @@ def install_python27():
 
 	# install python 2.7
 	success = run_os_command({
-		'apt-get': 'sudo apt-get install -y python2.7',
-		'yum': 'sudo yum install -y python27',
+		'apt-get': 'apt-get install -y python2.7',
+		'yum': 'yum install -y python27',
 		'brew': 'brew install python'
 	})
 
@@ -86,13 +86,13 @@ def clone_bench_repo():
 
 	run_os_command({
 		'brew': 'mkdir -p /usr/local/frappe',
-		'apt-get': 'sudo mkdir -p /usr/local/frappe',
-		'yum': 'sudo mkdir -p /usr/local/frappe',
+		'apt-get': 'mkdir -p /usr/local/frappe',
+		'yum': 'mkdir -p /usr/local/frappe',
 	})
 
 	# change user
 	run_os_command({
-		'ls': 'sudo chown -R {user}:{user} /usr/local/frappe'.format(user=getpass.getuser()),
+		'ls': 'chown -R {user}:{user} /usr/local/frappe'.format(user=getpass.getuser()),
 	})
 
 	success = run_os_command(
@@ -102,7 +102,7 @@ def clone_bench_repo():
 	return success
 
 def run_os_command(command_map):
-	'''command_map is a dictionary of {'executable': command}. For ex. {'apt-get': 'sudo apt-get install -y python2.7'} '''
+	'''command_map is a dictionary of {'executable': command}. For ex. {'apt-get': 'apt-get install -y python2.7'} '''
 	success = True
 	for executable, commands in command_map.items():
 		if find_executable(executable):
